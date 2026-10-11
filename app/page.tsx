@@ -5,6 +5,7 @@ import LatestGuides from '@/components/latest-guides';
 import FeaturedExercises from '@/components/featured-exercises';
 import FeaturedQuizzes from '@/components/featured-quizzes';
 import { FeaturedTools } from '@/components/featured-tools';
+import { HomeSponsors } from '@/components/home-sponsors';
 import { SectionHeader } from '@/components/section-header';
 import { SectionSeparator } from '@/components/section-separator';
 import { ArrowRight, Globe, Anchor, Scale, GitBranch, Database, Shield } from 'lucide-react';
@@ -201,7 +202,7 @@ export default async function Home() {
               <dt className="text-[11px] uppercase tracking-wider text-muted-foreground">
                 Subscribers
               </dt>
-              <dd className="text-lg tabular-nums font-semibold mt-1">5,000+</dd>
+              <dd className="text-lg tabular-nums font-semibold mt-1">1,500+</dd>
               <dd className="text-xs text-muted-foreground/80 mt-0.5">engineers</dd>
             </div>
             <div className="bg-card p-4">
@@ -213,6 +214,10 @@ export default async function Home() {
             </div>
           </dl>
         </section>
+
+        <SectionSeparator command="cat /sponsors" />
+
+        <HomeSponsors className="my-16" />
 
         {/* Newsletter CTA - terminal style */}
         <section className="my-20 max-w-3xl mx-auto">
@@ -247,7 +252,7 @@ export default async function Home() {
             </div>
           </div>
           <p className="text-xs text-muted-foreground text-center mt-4 font-mono tabular-nums">
-            5,000+ engineers subscribed
+            1,500+ engineers subscribed
           </p>
         </section>
       </div>
