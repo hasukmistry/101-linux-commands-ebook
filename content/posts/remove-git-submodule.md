@@ -1,12 +1,12 @@
 ---
-title: 'How to Remove a Git Submodule'
-excerpt: 'Need to remove a Git submodule from your repository? Learn the proper steps to cleanly delete submodules and avoid leaving behind configuration artifacts.'
+title: 'Remove a Git Submodule: deinit, git rm and Cleanup'
+excerpt: 'Run git submodule deinit -f path, then git rm -f path, and commit. To delete the leftover Git data too, remove .git/modules/<name>, usually the same path.'
 category:
   name: 'Git'
   slug: 'git'
 date: '2024-11-22'
 publishedAt: '2024-11-22T10:30:00Z'
-updatedAt: '2025-11-23T09:00:00Z'
+updatedAt: '2026-10-11T09:00:00Z'
 readingTime: '5 min read'
 author:
   name: 'DevOps Daily Team'
@@ -19,9 +19,9 @@ tags:
   - Development
 ---
 
-Git submodules can become unnecessary as projects evolve. Maybe you've decided to copy the code directly into your repository, or you're switching to a different dependency management approach. Removing a submodule requires more than just deleting the directory.
+**TLDR:** To remove a Git submodule, run `git submodule deinit -f path/to/submodule`, then `git rm -f path/to/submodule`, and commit. `deinit` clears its entry in `.git/config`, and `git rm` removes the folder and its entry in `.gitmodules`. To delete the submodule's leftover Git data as well, remove `.git/modules/<name>`, where the name is usually the same as the path (check `.gitmodules` before you remove it).
 
-**TLDR:** To remove a Git submodule, run `git submodule deinit -f path/to/submodule`, then `git rm -f path/to/submodule`, and finally remove the submodule entry from `.git/config` if it still exists. Commit the changes to complete the removal.
+Git submodules can become unnecessary as projects evolve. Maybe you've decided to copy the code directly into your repository, or you're switching to a different dependency management approach. Removing a submodule requires more than just deleting the directory.
 
 In this guide, you'll learn how to properly remove Git submodules and clean up all associated configuration.
 

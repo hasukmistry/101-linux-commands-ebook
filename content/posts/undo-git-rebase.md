@@ -1,12 +1,12 @@
 ---
-title: 'How to Undo a Git Rebase'
-excerpt: 'Rebase went wrong? Learn how to undo a Git rebase using reflog and reset commands to recover your branch to its state before the rebase operation.'
+title: 'How to Undo a Git Rebase with ORIG_HEAD or reflog'
+excerpt: 'Just rebased? Check git log -1 ORIG_HEAD, then run git reset --hard ORIG_HEAD. Otherwise find the old commit in git reflog. Mid-rebase: git rebase --abort.'
 category:
   name: 'Git'
   slug: 'git'
 date: '2024-10-28'
 publishedAt: '2024-10-28T14:00:00Z'
-updatedAt: '2025-11-23T09:00:00Z'
+updatedAt: '2026-10-11T09:00:00Z'
 readingTime: '6 min read'
 author:
   name: 'DevOps Daily Team'
@@ -19,9 +19,9 @@ tags:
   - Troubleshooting
 ---
 
-A rebase operation rewrites your commit history, and sometimes it does not go as planned. You might end up with conflicts you cannot resolve, lose commits you wanted to keep, or simply realize you rebased the wrong branch. The good news is that Git keeps track of your branch's previous state, making it possible to undo a rebase.
+**TLDR:** Right after a rebase finishes, `git reset --hard ORIG_HEAD` usually puts your branch back, because Git saves the pre-rebase tip in `ORIG_HEAD`. Check it first with `git log -1 ORIG_HEAD`, since some steps during a rebase, such as a reset while splitting a commit, overwrite it. Otherwise, use `git reflog` to find the commit hash before the rebase started (look for the entry right before the rebase), then run `git reset --hard <commit-hash>` to restore your branch to that state. If you're in the middle of a rebase, use `git rebase --abort` instead.
 
-**TLDR:** To undo a rebase, use `git reflog` to find the commit hash before the rebase started (look for the entry right before the rebase), then run `git reset --hard <commit-hash>` to restore your branch to that state. If you're in the middle of a rebase, use `git rebase --abort` instead.
+A rebase operation rewrites your commit history, and sometimes it does not go as planned. You might end up with conflicts you cannot resolve, lose commits you wanted to keep, or simply realize you rebased the wrong branch. The good news is that Git keeps track of your branch's previous state, making it possible to undo a rebase.
 
 In this guide, you'll learn how to safely undo rebases and recover your repository to its previous state.
 
@@ -85,7 +85,14 @@ To undo the rebase, you want to reset to the state before it started. In the exa
 
 ## Undoing a Completed Rebase
 
-After you've finished a rebase, use the reflog to find where your branch was before:
+If the rebase just finished and you have not run anything else since, the quickest undo is `ORIG_HEAD`. Git sets it to the tip of your branch before the rebase started:
+
+```bash
+# Put the branch back exactly where it was before the rebase
+git reset --hard ORIG_HEAD
+```
+
+Check what it points to first with `git log -1 ORIG_HEAD`. Commands such as `git reset`, `git merge` or another rebase overwrite it, and so does a reset you ran while editing or splitting a commit during the rebase. If it does not point to your old branch tip, use the reflog to find where your branch was before:
 
 ```bash
 # View the reflog

@@ -37,7 +37,11 @@ The way you deploy your application matters just as much as what you deploy. Dif
 | Users a bad release reaches | Everyone, until you switch back                                    | Only the canary share                                                        | The share of traffic on updated instances              |
 | What it needs               | A traffic switch, and database changes both versions can use       | Traffic splitting and metrics split by version                               | Old and new versions that can run side by side         |
 
-To watch each strategy route traffic and roll back, try the [Deployment Strategies Simulator](/games/deployment-strategies).
+:::tip
+Try it in the simulator: the [Deployment Strategies Simulator](/games/deployment-strategies) routes traffic with each strategy and lets you roll back a bad release.
+:::
+
+For a head-to-head on the two most common choices, see [blue-green vs canary deployments](/comparisons/blue-green-vs-canary-deployments). To decouple releasing a feature from deploying it, see [progressive delivery with feature flags](/posts/how-to-implement-progressive-delivery-with-feature-flags), and to practice explaining a rollback plan in an interview, try [this rollback strategy question](/interview-questions/senior/progressive-delivery-rollback-strategy).
 
 ## Why Deployment Strategy Matters
 
