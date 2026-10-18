@@ -298,6 +298,7 @@ export function PostgresDayGate({
   day,
   builtLocked = false,
   preview = false,
+  initiallyOpen = false,
   children,
 }: {
   publishedAt: string;
@@ -305,10 +306,13 @@ export function PostgresDayGate({
   builtLocked?: boolean;
   /** A preview build of another branch: every day is open. */
   preview?: boolean;
+  /** The day had already opened when the page was built: render it without waiting. */
+  initiallyOpen?: boolean;
   children?: React.ReactNode;
 }) {
-  const [unlocked, setUnlocked] = useState<boolean | null>(null);
+  const [unlocked, setUnlocked] = useState<boolean | null>(initiallyOpen ? true : null);
   useEffect(() => {
+    if (initiallyOpen) return;
     const t = setTimeout(
       () =>
         setUnlocked(
@@ -317,7 +321,7 @@ export function PostgresDayGate({
       0
     );
     return () => clearTimeout(t);
-  }, [publishedAt, builtLocked, preview]);
+  }, [publishedAt, builtLocked, preview, initiallyOpen]);
   if (unlocked === null) return null;
   if (builtLocked && unlocked) {
     return (
