@@ -8,17 +8,23 @@ import type { PostgresAdventDaySummary } from '@/lib/advent-postgres';
 
 const TOTAL_DAYS = 24;
 
-export function PostgresAdventCalendar({ days }: { days: PostgresAdventDaySummary[] }) {
+export function PostgresAdventCalendar({
+  days,
+  preview = false,
+}: {
+  days: PostgresAdventDaySummary[];
+  preview?: boolean;
+}) {
   const [solved, setSolved] = useState<number[]>([]);
   const [open, setOpen] = useState<Record<number, boolean>>({});
 
   useEffect(() => {
     const t = setTimeout(() => {
       setSolved(loadSolved());
-      setOpen(Object.fromEntries(days.map((d) => [d.day, isUnlocked(d.publishedAt)])));
+      setOpen(Object.fromEntries(days.map((d) => [d.day, preview || isUnlocked(d.publishedAt)])));
     }, 0);
     return () => clearTimeout(t);
-  }, [days]);
+  }, [days, preview]);
 
   const byDay = new Map(days.map((d) => [d.day, d]));
 
@@ -68,23 +74,46 @@ export function PostgresAdventCalendar({ days }: { days: PostgresAdventDaySummar
   );
 }
 
-/** Hides a day's puzzle until 00:00 UTC on its date (or with ?preview). */
+/**
+ * Hides a day's puzzle until 00:00 UTC on its date (or with ?preview). A page
+ * built before the day opened has no puzzle in it (builtLocked); if its time has
+ * come, the next build is on its way.
+ */
 export function PostgresDayGate({
   publishedAt,
   day,
+  builtLocked = false,
+  preview = false,
   children,
 }: {
   publishedAt: string;
   day: number;
-  children: React.ReactNode;
+  builtLocked?: boolean;
+  /** A preview build of another branch: every day is open. */
+  preview?: boolean;
+  children?: React.ReactNode;
 }) {
   const [unlocked, setUnlocked] = useState<boolean | null>(null);
   useEffect(() => {
-    const t = setTimeout(() => setUnlocked(isUnlocked(publishedAt)), 0);
+    const t = setTimeout(
+      () =>
+        setUnlocked(
+          builtLocked ? Date.now() >= Date.parse(publishedAt) : preview || isUnlocked(publishedAt)
+        ),
+      0
+    );
     return () => clearTimeout(t);
-  }, [publishedAt]);
+  }, [publishedAt, builtLocked, preview]);
   if (unlocked === null) return null;
-  if (!unlocked) {
+  if (builtLocked && unlocked) {
+    return (
+      <div className="my-10 rounded-md border border-dashed border-border p-8 text-center">
+        <p className="font-medium">Day {day} is opening now.</p>
+        <p className="mt-1 text-sm text-muted-foreground">Reload the page in a few minutes.</p>
+      </div>
+    );
+  }
+  if (!unlocked || builtLocked) {
     return (
       <div className="my-10 rounded-md border border-dashed border-border p-8 text-center">
         <Lock className="mx-auto mb-3 h-5 w-5 text-muted-foreground" />
